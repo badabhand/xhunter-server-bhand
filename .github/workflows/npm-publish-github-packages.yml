@@ -1,18 +1,22 @@
-name: Deployment
-
-concurrency:
-  group: production
-  cancel-in-progress: true
+name: Node.js CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
-  deployment:
-    runs-on: ubuntu-latest
-    environment: production
+  build:
+
+    runs-on: self-hosted
+
     steps:
-      - name: deploy
-        # ...deployment-specific steps
+    - uses: actions/checkout@v2
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+    - run: npm install
+    - run: npm test
+    - run: pm2 restart app-name
